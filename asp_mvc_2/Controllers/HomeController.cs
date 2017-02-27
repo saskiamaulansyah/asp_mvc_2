@@ -2,7 +2,7 @@
 using Asp_mvc_2.Security;
 using Asp_mvc_2.Models.ViewModel;
 using Asp_mvc_2.Models.EntityManager;
-
+ 
 
 namespace Asp_mvc_2.Controllers {
     public class HomeController : Controller {
@@ -66,6 +66,25 @@ namespace Asp_mvc_2.Controllers {
             UM.DeleteUser(userID);
             return Json(new { success = true });
         }
-
+        [Authorize]
+        public ActionResult EditProfile()
+        {
+            string loginName = User.Identity.Name;
+            UserManager UM = new UserManager();
+            UserProfileView UPV = UM.GetUserProfile(UM.GetUserID(loginName));
+            return View(UPV);
+        }
+        [HttpPost]
+        [Authorize]
+        public ActionResult EditProfile(UserProfileView profile)
+        {
+            if (ModelState.IsValid)
+            {
+                UserManager UM = new UserManager();
+                UM.UpdateUserAccount(profile);
+                ViewBag.Status = "Update Sucessful!";
+            }
+            return View(profile);
+        }
     }
 }
